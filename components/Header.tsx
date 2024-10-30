@@ -10,7 +10,7 @@ const Header = () => {
             </div>
             <SignedOut>
               <div className="bg-[#fe6c37] text-white rounded-lg p-3 text-sm font-extralight">
-                <SignUpButton />
+              <SignUpButton />
               </div>
             </SignedOut>
             <SignedIn>

@@ -1,101 +1,71 @@
-import Image from "next/image";
+'use server'
+import { auth, currentUser } from '@clerk/nextjs/server';
+import { redirect } from 'next/navigation';
+import React from 'react'
+import { SignUpButton } from '@clerk/nextjs';
+import TypeWriter from '@/components/TypeWriter';
+import Header from '@/components/Header';
+import Image from 'next/image';
 
-export default function Home() {
+const Page = async () => {
+
+  const { userId } = await auth();
+  const user = await currentUser();
+  console.log("email", user?.emailAddresses[0].emailAddress)
+ 
+  {
+    if (userId) {
+      return redirect("/postman");
+    }
+  }
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="h-screen w-screen flex flex-col font-sans">
+      <div className="">
+        <Header />
+      </div>
+      <div className="h-full w-full flex">
+        <div className='w-full h-full'>
+          <div className='py-10 px-10 lg:px-20 h-full flex flex-col justify-around'>
+            <div className='flex flex-col justify-around items-start gap-2'> 
+              <div>
+                <TypeWriter />
+              </div>
+              <div className='text-xl tracking-wider font-semibold font-sans'>API&apos;s together</div>
+              <p className='text-lg font-sans font-extralight'>Over 30 million developers use Postman. Get started by signing up or downloading the desktop app.</p>
+              <div className='mt-5 flex justify-start items-center h-fit w-fit border border-[#fe6c37] rounded-lg gap-3 pr-3'>
+                <div className='bg-[#fe6c37] border border-[#fe6c37] rounded-md text-white font-sans font-light text-sm p-3 flex justify-center items-center'><SignUpButton /></div>
+                <div className=''>To Get Started</div>
+              </div>
+            </div>
+              <div>
+                <h1 className='text-xl font-sans font-semibold'>
+                  What is LostMan?
+                </h1>
+                <p className='font-sans font-extralight'>
+                  Lostman is an API platform for building and using APIs. Postman simplifies each step of the API lifecycle and streamlines collaboration so you can create better APIs—faster.
+                </p>
+              </div>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        <div className='h-full w-0 lg:w-full flex flex-col justify-between items-end overflow-visible'>
+          <div className='w-full h-full bg-cover bg-right-top bg-[url(https://www.postman.com/_wp-assets/home/homepage-hero-light_1800w.21bd14bd629f14c1.png)]'>
+          </div>
+          <div className='w-[50%] h-[50%] object-cover'>
+             <Image 
+              className=''
+              height={1000}
+              width={1000}
+              src={"https://www.postman.com/_wp-assets/home/homepage-header-illustration.3385ecfa6f9284b1df99096f6ab456fe.svg"}
+              alt='nothing'
+             />
+          </div>
+        </div>
+      </div>
     </div>
-  );
+  )
 }
+
+export default Page;
+
+

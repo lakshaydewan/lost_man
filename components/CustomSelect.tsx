@@ -12,15 +12,13 @@ import {
 export default function CustomSelect({cb}: {cb: (one: string) => void}) {
 
   return (
-    <Select onValueChange={(e)=> {
+    <Select onValueChange={(e) => {
       cb(e)
     }}>
       <SelectTrigger className="w-[180px]">
-        <SelectValue placeholder="Select a Method" />
+        <SelectValue placeholder="Select a Method" defaultValue={""}/>
       </SelectTrigger>
-      <SelectContent onVolumeChange={()=> {
-        console.log('ran')
-      }}>
+      <SelectContent>
         <SelectGroup>
           <SelectItem value="POST">POST</SelectItem>
           <SelectItem value="GET">GET</SelectItem>
