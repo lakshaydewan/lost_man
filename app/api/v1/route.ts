@@ -1,5 +1,7 @@
 import { DATA } from "@/lib/types";
 import axios from "axios";
+import { time } from "console";
+import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -13,23 +15,30 @@ export async function POST(request: NextRequest) {
                 return NextResponse.json({ data: response.data });
 
             case "GET":
-                const start = performance.now()
-                response = await axios.get(body.url, {
-                    headers: {
-                        Authorization: body.authHeaders
-                    }
-                });
-                const end = performance.now()
-                const Time = Math.floor(end - start) + "ms";
-                const dataSize = Buffer.byteLength(JSON.stringify(response.data));
-                const status = response.status + response.statusText
-                return NextResponse.json({
-                    data: response.data,
-                    headers: response.headers,
-                    size: dataSize,
-                    statusCode: status,
-                    responseTime: Time
-                });
+                try {
+                    const start = performance.now()
+                    response = await axios.get(body.url, {
+                        headers: {
+                            Authorization: body.authHeaders
+                        }
+                    });
+                    const end = performance.now()
+                    const Time = Math.floor(end - start) + "ms";
+                    const dataSize = Buffer.byteLength(JSON.stringify(response.data));
+                    const status = response.status + response.statusText
+                    return NextResponse.json({
+                        data: response.data,
+                        headers: response.headers,
+                        size: dataSize,
+                        statusCode: status,
+                        responseTime: Time
+                    });
+                } catch (error) {
+                    console.log("error", error);
+                    return NextResponse.json({
+                        message: "Something Went Wrong !!",
+                    }) 
+                }
 
             case "PUT":
                 response = await axios.put(body.url, body.body);
@@ -44,7 +53,7 @@ export async function POST(request: NextRequest) {
         }
     } catch (error: unknown) {
         console.error("Error:", error);
-        return NextResponse.json({error: error}, { status: 500 });
+        return NextResponse.json({ error: error }, { status: 500 });
     }
 }
 

@@ -19,8 +19,9 @@ const Postman = () => {
   const [responseHeaders, setResponseHeaders] = useState();
   const [isHeadersVisible, setIsHeadersVisible] = useState(false);
   const [statusCode, setStatusCode] = useState("");
-  const [responseTime , setResponseTime] = useState("");
+  const [responseTime, setResponseTime] = useState("");
   const [size, setSize] = useState("");
+  const [resError, setResError] = useState("");
 
   const handleClick = async () => {
     if (isHeadersActive === false) {
@@ -57,6 +58,10 @@ const Postman = () => {
 
     try {
       const res = await axios.post(`${process.env.NEXT_PUBLIC_URL}/api/v1`, data)
+      if (res.data.message) {
+        setResError(res.data.message);
+        return 0;
+      }
       setReturnedData(res.data.data);
       setResponseHeaders(res.data.headers)
       setResponseTime(res.data.responseTime)
@@ -88,6 +93,7 @@ const Postman = () => {
   const onChange = useCallback((val: string) => {
     try {
       if (val === "") {
+        setError("")
         return
       }
       const json = JSON.parse(val);
@@ -184,31 +190,27 @@ const Postman = () => {
         <div className='w-full gap-2 h-full flex flex-col justify-center overflow-scroll'>
           <div className='h-10 border w-full rounded-lg flex justify-between items-center'>
             <div className='ml-3 font-sans font-bold text-sm md:text-md flex justify-center items-center gap-2'>
-             <div>
-              Body
-             </div>
-             {
-               isHeadersVisible ? (
-                <div className={`border rounded-lg px-2 md:py-[1px] hover:text-[#fe6c37] hover:border-[#fe6c37] transition-all duration-500 ease-out cursor-pointer font-sans text-wrap md:text-base text-xs`} onClick={() => {
-                  setIsHeadersVisible(!isHeadersVisible);
-                }}>Hide Header</div>
-               ) : (
-                <div className={`border rounded-lg px-2 py-[1px] hover:text-[#fe6c37] hover:border-[#fe6c37] transition-all duration-500 ease-out cursor-pointer font-sans text-wrap md:text-base text-xs`} onClick={() => {
-                  setIsHeadersVisible(!isHeadersVisible);
-                }}>See Header</div>
-               )
-             }
+              <div>
+                Body
+              </div>
+              {
+                isHeadersVisible ? (
+                  <div className={`border rounded-lg px-2 md:py-[1px] hover:text-[#fe6c37] hover:border-[#fe6c37] transition-all duration-500 ease-out cursor-pointer font-sans text-wrap md:text-base text-xs`} onClick={() => {
+                    setIsHeadersVisible(!isHeadersVisible);
+                  }}>Hide Header</div>
+                ) : (
+                  <div className={`border rounded-lg px-2 py-[1px] hover:text-[#fe6c37] hover:border-[#fe6c37] transition-all duration-500 ease-out cursor-pointer font-sans text-wrap md:text-base text-xs`} onClick={() => {
+                    setIsHeadersVisible(!isHeadersVisible);
+                  }}>See Header</div>
+                )
+              }
             </div>
-            <div className={`mr-3 flex justify-center items-center gap-3 md:text-base text-sm ${
-              statusCode.startsWith("20") && "text-green-500"
-            } ${
-              statusCode.startsWith("30") && "text-yellow-400"
-            } ${
-              (statusCode === "") && "text-black"
-            }
-            ${
-              (statusCode.startsWith("40") || statusCode.startsWith("50")) && "text-red-500"
-            }`}>
+            <div className={`mr-3 flex justify-center items-center gap-3 md:text-base text-sm ${statusCode.startsWith("20") && "text-green-500"
+              } ${statusCode.startsWith("30") && "text-yellow-400"
+              } ${(statusCode === "") && "text-black"
+              }
+            ${(statusCode.startsWith("40") || statusCode.startsWith("50")) && "text-red-500"
+              }`}>
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1} stroke="currentColor" className="size-5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418" />
               </svg>
@@ -221,18 +223,31 @@ const Postman = () => {
           </div>
           <div className='w-full h-full overflow-y-scroll border rounded-lg'>
             {
-              isHeadersVisible ? (
-                <CodeMirror indentWithTab className='text-black font-normal text-[15px]' height='full'
-                value={JSON.stringify(responseHeaders, null, 2)} 
-                readOnly
-              />
-              ): (
-                <CodeMirror indentWithTab className='text-black font-normal text-[15px]' height='full'
-                value={JSON.stringify(returneddata, null, 2)}
-                readOnly
-              />
+              (resError === "") ? (
+                <div>
+                  {
+                    isHeadersVisible ? (
+                      <CodeMirror indentWithTab className='text-black font-normal text-[15px]' height='full'
+                        value={JSON.stringify(responseHeaders, null, 2)}
+                        readOnly
+                      />
+                    ) : (
+                      <CodeMirror indentWithTab className='text-black font-normal text-[15px]' height='full'
+                        value={JSON.stringify(returneddata, null, 2)}
+                        readOnly
+                      />
+                    )
+                  }
+                </div>
+              ) : (
+                <div className='w-full h-full flex justify-center items-center'>
+                    <div className='border'>
+                      {resError}
+                    </div>
+                </div>
               )
             }
+
           </div>
         </div>
       </div>
