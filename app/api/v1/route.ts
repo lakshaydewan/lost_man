@@ -1,7 +1,5 @@
 import { DATA } from "@/lib/types";
 import axios from "axios";
-import { time } from "console";
-import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
