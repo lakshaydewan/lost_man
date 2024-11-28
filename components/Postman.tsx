@@ -6,6 +6,7 @@ import { CustomRadioGroup } from './CustomRadio';
 import axios from 'axios';
 import Image from 'next/image';
 import { DATA } from '@/lib/types';
+import DialogButton from './CustomDialog';
 
 const Postman = () => {
 
@@ -23,6 +24,7 @@ const Postman = () => {
   const [statusCode, setStatusCode] = useState("");
   const [responseTime, setResponseTime] = useState("");
   const [size, setSize] = useState("");
+  const [completeError, setCompleteError] = useState("");
   const [resError, setResError] = useState("");
 
   const handleClick = async () => {
@@ -62,6 +64,7 @@ const Postman = () => {
       setLoading(true);
       const res = await axios.post(`${process.env.NEXT_PUBLIC_URL}/api/v1`, data)
       if (res.data.message) {
+        setCompleteError(JSON.stringify(res.data.error));
         setResError(res.data.message);
         return 0;
       }
@@ -258,14 +261,17 @@ const Postman = () => {
                   }
                 </div>
               ) : (
-                <div className='w-full h-full flex justify-center items-center'>
+                <div className='w-full h-full flex flex-col justify-center items-center'>
                     <div className=''>
                       {resError}
                     </div>
+                    <DialogButton error={completeError} />
+                    {/* <div>
+                      <button className='mt-2 bg-red-500 hover:bg-red-400 cursor-pointer transition-all duration-500 ease-in-out font-sans font-light text-white text-sm py-2 px-4 rounded-lg' onClick={handleClick}>See Detailed Error</button>
+                    </div> */}
                 </div>
               )
             }
-
           </div>
         </div>
       </div>

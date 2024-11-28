@@ -9,13 +9,9 @@ export async function POST(request: NextRequest) {
         let response;
         switch (body.method) {
             case "POST":
-                response = await axios.post(body.url, body.body);
-                return NextResponse.json({ data: response.data });
-
-            case "GET":
                 try {
                     const start = performance.now()
-                    response = await axios.get(body.url, {
+                    response = await axios.post(body.url, body.body, {
                         headers: {
                             Authorization: body.authHeaders
                         }
@@ -35,16 +31,89 @@ export async function POST(request: NextRequest) {
                     console.log("error", error);
                     return NextResponse.json({
                         message: "Something Went Wrong !!",
+                        error: error
+                    }) 
+                }
+
+            case "GET":
+                try {
+                    const start = performance.now()
+                    response = await axios.get(body.url, {
+                        headers: {
+                            Authorization: body.authHeaders
+                        }
+                    });
+                    const end = performance.now()
+                    const Time = Math.floor(end - start) + "ms";
+                    const dataSize = Buffer.byteLength(JSON.stringify(response.data));
+                    const status = response.status + response.statusText
+                    console.log("response", response.data);
+                    return NextResponse.json({
+                        data: response.data,
+                        headers: response.headers,
+                        size: dataSize,
+                        statusCode: status,
+                        responseTime: Time
+                    });
+                } catch (error) {
+                    return NextResponse.json({
+                        message: "Something Went Wrong !!",
+                        error: error
                     }) 
                 }
 
             case "PUT":
-                response = await axios.put(body.url, body.body);
-                return NextResponse.json({ data: response.data });
+                try {
+                    const start = performance.now()
+                    response = await axios.post(body.url, body.body, {
+                        headers: {
+                            Authorization: body.authHeaders
+                        }
+                    });
+                    const end = performance.now()
+                    const Time = Math.floor(end - start) + "ms";
+                    const dataSize = Buffer.byteLength(JSON.stringify(response.data));
+                    const status = response.status + response.statusText
+                    return NextResponse.json({
+                        data: response.data,
+                        headers: response.headers,
+                        size: dataSize,
+                        statusCode: status,
+                        responseTime: Time
+                    });
+                } catch (error) {
+                    console.log("error", error);
+                    return NextResponse.json({
+                        message: "Something Went Wrong !!",
+                        error: error
+                    }) 
+                }
 
             case "DELETE":
-                response = await axios.delete(body.url);
-                return NextResponse.json({ data: response.data });
+                try {
+                    const start = performance.now()
+                    response = await axios.delete(body.url, {
+                        headers: {
+                            Authorization: body.authHeaders
+                        }
+                    });
+                    const end = performance.now()
+                    const Time = Math.floor(end - start) + "ms";
+                    const dataSize = Buffer.byteLength(JSON.stringify(response.data));
+                    const status = response.status + response.statusText
+                    return NextResponse.json({
+                        data: response.data,
+                        headers: response.headers,
+                        size: dataSize,
+                        statusCode: status,
+                        responseTime: Time
+                    });
+                } catch (error) {
+                    return NextResponse.json({
+                        message: "Something Went Wrong !!",
+                        error: error
+                    })
+                }
 
             default:
                 return NextResponse.json({ message: "Invalid method" }, { status: 400 });
