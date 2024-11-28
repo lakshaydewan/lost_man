@@ -4,6 +4,7 @@ import CodeMirror from '@uiw/react-codemirror';
 import CustomSelect from './CustomSelect';
 import { CustomRadioGroup } from './CustomRadio';
 import axios from 'axios';
+import Image from 'next/image';
 import { DATA } from '@/lib/types';
 
 const Postman = () => {
@@ -72,7 +73,7 @@ const Postman = () => {
       setLoading(false);
     } catch (err) {
       setLoading(false);
-      console.log(loading)
+      console.log("ERRORR", err)
     }
   }
 
@@ -235,7 +236,7 @@ const Postman = () => {
                   {
                     loading ? (
                       <div className='w-full h-full flex justify-center items-center bg-[#fcf9f8]'>
-                        <img src={"/assets/loader.gif"} alt='loading' className='size-32 object-center object-cover' />
+                        <Image src={"/assets/loader.gif"} alt='loading' className='size-32 object-center object-cover' />
                       </div>
                     ) : (
                       <>
