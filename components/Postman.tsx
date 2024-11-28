@@ -15,6 +15,7 @@ const Postman = () => {
   const [isHeadersActive, setIsHeadersActive] = useState(false);
   const [authHeaders, setAuthHeaders] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const [returneddata, setReturnedData] = useState();
   const [responseHeaders, setResponseHeaders] = useState();
   const [isHeadersVisible, setIsHeadersVisible] = useState(false);
@@ -57,6 +58,7 @@ const Postman = () => {
     }
 
     try {
+      setLoading(true);
       const res = await axios.post(`${process.env.NEXT_PUBLIC_URL}/api/v1`, data)
       if (res.data.message) {
         setResError(res.data.message);
@@ -67,10 +69,15 @@ const Postman = () => {
       setResponseTime(res.data.responseTime)
       setStatusCode(res.data.statusCode)
       setSize(res.data.size)
-      console.log(returneddata);
+      setLoading(false);
     } catch (err) {
-      console.log(err)
+      setLoading(false);
+      console.log(loading)
     }
+  }
+
+  const handleClickCB = () => {
+    setError("");
   }
 
   const cbForSelect = (methodVal: string) => {
@@ -141,7 +148,7 @@ const Postman = () => {
                 )
               }
             </div>
-            <div className='w-fit h-fit ml-2'><CustomRadioGroup cb={cbForRadio} /></div>
+            <div className='w-fit h-fit ml-2'><CustomRadioGroup callbackForClick={handleClickCB} cb={cbForRadio} /></div>
           </div>
           {
             isBodyNone ? (
@@ -224,24 +231,34 @@ const Postman = () => {
           <div className='w-full h-full overflow-y-scroll border rounded-lg'>
             {
               (resError === "") ? (
-                <div>
+                <div className='w-full h-full'>
                   {
-                    isHeadersVisible ? (
-                      <CodeMirror indentWithTab className='text-black font-normal text-[15px]' height='full'
-                        value={JSON.stringify(responseHeaders, null, 2)}
-                        readOnly
-                      />
+                    loading ? (
+                      <div className='w-full h-full flex justify-center items-center bg-[#fcf9f8]'>
+                        <img src={"/assets/loader.gif"} alt='loading' className='size-32 object-center object-cover' />
+                      </div>
                     ) : (
-                      <CodeMirror indentWithTab className='text-black font-normal text-[15px]' height='full'
-                        value={JSON.stringify(returneddata, null, 2)}
-                        readOnly
-                      />
+                      <>
+                        {
+                          isHeadersVisible ? (
+                            <CodeMirror indentWithTab className='text-black font-normal text-[15px]' height='full'
+                              value={JSON.stringify(responseHeaders, null, 2)}
+                              readOnly
+                            />
+                          ) : (
+                            <CodeMirror indentWithTab className='text-black font-normal text-[15px]' height='full'
+                              value={JSON.stringify(returneddata, null, 2)}
+                              readOnly
+                            />
+                          )
+                        }
+                      </>
                     )
                   }
                 </div>
               ) : (
                 <div className='w-full h-full flex justify-center items-center'>
-                    <div className='border'>
+                    <div className=''>
                       {resError}
                     </div>
                 </div>
