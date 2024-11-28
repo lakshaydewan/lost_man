@@ -40,7 +40,7 @@ const Postman = () => {
       }, 2000)
       return;
     }
-    if (url === "" || (!url.startsWith("https://"))) {
+    if (url === "" || (!url.startsWith("http"))) {
       setError("Provide a valid url.")
       setTimeout(() => {
         setError("")
@@ -236,7 +236,7 @@ const Postman = () => {
                   {
                     loading ? (
                       <div className='w-full h-full flex justify-center items-center bg-[#fcf9f8]'>
-                        <Image src={"/assets/loader.gif"} alt='loading' className='size-32 object-center object-cover' />
+                        <Image width={1000} height={1000} src={"/assets/loader.gif"} alt='loading' className='size-32 object-center object-cover' />
                       </div>
                     ) : (
                       <>
