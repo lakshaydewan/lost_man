@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
-import { promises as fs } from "fs";
-import path from "path";
 
-const filePath = path.join(process.cwd(), 'public', 'assets', 'data.txt');
 const secretKey: string = process.env.JWT_SECRET as string
 
 export async function POST(request: NextRequest) {
@@ -18,14 +15,7 @@ export async function POST(request: NextRequest) {
                 }
             );
         }
-
-        // Generate the JWT (exclude sensitive data like password)
         const token = jwt.sign({ email: body.email }, secretKey, { expiresIn: '1h' });
-
-        // Write the token to a file
-        await fs.writeFile(filePath, token, 'utf8');
-        console.log('File written successfully');
-
         return NextResponse.json(
             { data: { token } },
             { status: 201 }
