@@ -7,6 +7,7 @@ import axios from 'axios';
 import Image from 'next/image';
 import { DATA } from '@/lib/types';
 import DialogButton from './CustomDialog';
+import Headers from './HeadersCheckBoxes';
 
 const Postman = () => {
 
@@ -16,6 +17,13 @@ const Postman = () => {
   const [url, setUrl] = useState("");
   const [isHeadersActive, setIsHeadersActive] = useState(false);
   const [authHeaders, setAuthHeaders] = useState("");
+  const [allHeaders, setAllHeaders] = useState([
+    {
+      key: "",
+      value: "",
+      disabled: false
+    }
+  ]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [returneddata, setReturnedData] = useState();
@@ -26,6 +34,15 @@ const Postman = () => {
   const [size, setSize] = useState("");
   const [completeError, setCompleteError] = useState("");
   const [resError, setResError] = useState("");
+
+  function getData(data: {
+    key: string;
+    value: string;  
+    disabled: boolean;
+  }[]) {
+      setAllHeaders(data)
+      console.log(allHeaders)
+  }
 
   const handleClick = async () => {
     if (isHeadersActive === false) {
@@ -42,6 +59,7 @@ const Postman = () => {
       }, 2000)
       return;
     }
+
     if (url === "" || (!url.startsWith("http"))) {
       setError("Provide a valid url.")
       setTimeout(() => {
@@ -60,8 +78,13 @@ const Postman = () => {
       authHeaders
     }
 
+    
+
     try {
       setLoading(true);
+      setCompleteError("");
+      setResError("");
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       const res = await axios.post(`${process.env.NEXT_PUBLIC_URL}/api/v1`, data)
       if (res.data.message) {
         setCompleteError(JSON.stringify(res.data.error));
@@ -156,16 +179,22 @@ const Postman = () => {
           </div>
           {
             isBodyNone ? (
-              <div className='w-full font-sans text-2xl font-light'>
+              <div className='w-full h-full flex justify-center items-center'>
+                    {!isHeadersActive && (<div className='font-light font-sans text-base text-neutral-950'>
+                      The request will be sent without any headers or body !
+                    </div>)}
                 {
                   isHeadersActive && (
-                    <div className='w-full h-[200px]'>
+                    <div className='w-full h-full'>
                       <div className='flex flex-col gap-1'>
-                        <span className='font-sans font-extralight'>Authorization :</span>
+                        <span className=''>Authorization :</span>
                         <span><textarea
                           onChange={(e) => {
                             setAuthHeaders(e.target.value)
                           }} rows={3} placeholder='Bearer {token}' className='w-full text-neutral-950 h-full pl-2 font-sans text-md font-light focus:outline-none focus:border-neutral-800 border rounded-md' /></span>
+                        <div className='h-full'>
+                          <Headers cb={getData} />
+                        </div>
                       </div>
                     </div>
                   )
@@ -191,6 +220,7 @@ const Postman = () => {
                           setAuthHeaders(e.target.value)
                         }} rows={3} placeholder='Bearer {token}' className='w-full text-neutral-950 h-full pl-2 font-sans text-md font-light focus:outline-none focus:border-neutral-800 border rounded-md' /></span>
                       </div>
+                      <Headers cb={getData} />
                     </div>
                   )
                 }
@@ -262,13 +292,10 @@ const Postman = () => {
                 </div>
               ) : (
                 <div className='w-full h-full flex flex-col justify-center items-center'>
-                    <div className=''>
-                      {resError}
-                    </div>
-                    <DialogButton error={completeError} />
-                    {/* <div>
-                      <button className='mt-2 bg-red-500 hover:bg-red-400 cursor-pointer transition-all duration-500 ease-in-out font-sans font-light text-white text-sm py-2 px-4 rounded-lg' onClick={handleClick}>See Detailed Error</button>
-                    </div> */}
+                  <div className=''>
+                    {resError}
+                  </div>
+                  <DialogButton error={completeError} />
                 </div>
               )
             }

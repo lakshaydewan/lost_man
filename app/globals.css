@@ -17,3 +17,7 @@ body {
     --radius: 0.5rem;
   }
 }
+
+textarea {
+  resize: none;
+}
